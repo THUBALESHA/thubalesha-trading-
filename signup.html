@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .form-box {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            width: 320px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #1ebe5d;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-box">
+    <h2>Sign Up</h2>
+    <form onsubmit="sendToWhatsApp(); return false;">
+        <input type="text" id="name" placeholder="Name" required>
+        <input type="text" id="surname" placeholder="Surname" required>
+        <input type="tel" id="contact" placeholder="Contact Number" required>
+        <input type="email" id="email" placeholder="Email Address" required>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<script>
+function sendToWhatsApp() {
+    var name = document.getElementById("name").value;
+    var surname = document.getElementById("surname").value;
+    var contact = document.getElementById("contact").value;
+    var email = document.getElementById("email").value;
+
+    var message = "New Sign Up:%0A"
+                + "Name: " + name + "%0A"
+                + "Surname: " + surname + "%0A"
+                + "Contact: " + contact + "%0A"
+                + "Email: " + email;
+
+    var whatsappURL = "https://wa.me/27787102337?text=" + message;
+
+    window.open(whatsappURL, "_blank");
+}
+</script>
+
+</body>
+</html>
