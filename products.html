@@ -40,8 +40,7 @@ input, select{width:100%;padding:8px;margin:5px 0;border-radius:5px;border:none}
 <div id="cart-items"></div>
 <p><strong>Total: R<span id="total">0</span></strong></p>
 <div class="section">
-<h4>Referral Code</h4>
-<input type="text" id="referral-code" placeholder="Enter Referral Code (Optional)"><h4>Shipping Details</h4>
+<h4>Shipping Details</h4>
 <input type="text" id="ship-name" placeholder="Full Name">
 <input type="text" id="ship-address" placeholder="Address">
 <input type="text" id="ship-city" placeholder="City/Town">
@@ -65,15 +64,6 @@ input, select{width:100%;padding:8px;margin:5px 0;border-radius:5px;border:none}
 <button type="submit" class="checkout">Checkout via PayFast</button>
 </form>
 <button class="checkout" onclick="checkoutYoco()">Checkout via Yoco</button>
-<button class="checkout" onclick="showEFT()" style="background:#444;color:#fff">Pay via EFT</button>
-<div id="eft-details" style="display:none;margin-top:15px;background:#1a1a1a;padding:15px;border-radius:10px;font-size:14px;">
-<strong>Bank:</strong> Your Bank Name<br>
-<strong>Account Name:</strong> THUBALESHA Fragrance<br>
-<strong>Account Number:</strong> 0000000000<br>
-<strong>Branch Code:</strong> 000000<br>
-<strong>Reference:</strong> Use Your Order Ref<br><br>
-After payment, send proof to WhatsApp: 0787102337
-</div>
 </div><div class="section">
 <div class="family-title">All Perfumes – R230.00 Each</div>
 <div class="grid" id="product-list"></div>
@@ -94,109 +84,54 @@ const perfumes = [
 
 const price = 230;
 let cart = [];
-
 const productList = document.getElementById("product-list");
-perfumes.forEach(name => {
-  productList.innerHTML += `
-    <div class="card">
-      ${name}
-      <div class="price">R230.00</div>
-      <button class="buy-btn" onclick="addToCart('${name.replace(/'/g, "\'")}')">Add to Cart</button>
-    </div>`;
+perfumes.forEach(name=>{
+productList.innerHTML += `<div class="card">${name}<div class="price">R230.00</div><button class="buy-btn" onclick="addToCart('${name}')">Add to Cart</button></div>`;
 });
 
-function addToCart(name) {
-  cart.push(name);
-  updateCart();
-  toggleCart(true);
+function addToCart(name){
+cart.push(name);
+updateCart();
+toggleCart(true);
 }
 
-function updateCart() {
-  const cartItems = document.getElementById("cart-items");
-  cartItems.innerHTML = "";
-
-  cart.forEach(item => {
-    cartItems.innerHTML += `<div class='cart-item'>${item} - R230</div>`;
-  });
-
-  const shippingCost = parseFloat(document.getElementById('ship-cost').value) || 0;
-  const total = cart.length * price + shippingCost;
-
-  document.getElementById("total").innerText = total;
-  document.getElementById("pf-amount").value = total;
-  document.getElementById("pf-item_name").value = cart.join(", ") + ` | Shipping R${shippingCost}`;
+function updateCart(){
+const cartItems=document.getElementById("cart-items");
+cartItems.innerHTML="";
+cart.forEach(item=>{cartItems.innerHTML+=`<div class='cart-item'>${item} - R230</div>`});
+const shippingCost = parseFloat(document.getElementById('ship-cost').value) || 0;
+document.getElementById("total").innerText=cart.length*price + shippingCost;
+document.getElementById("pf-amount").value=cart.length*price + shippingCost;
+document.getElementById("pf-item_name").value=cart.join(", ") + ` | Shipping R${shippingCost}`;
 }
 
-function toggleCart(force) {
-  const cartDiv = document.getElementById("cart");
-  if (force === true) {
-    cartDiv.style.display = "block";
-    return;
-  }
-  cartDiv.style.display = cartDiv.style.display === "block" ? "none" : "block";
+function toggleCart(force){
+const cartDiv=document.getElementById("cart");
+if(force===true){cartDiv.style.display="block";return;}
+cartDiv.style.display=cartDiv.style.display==="block"?"none":"block";
 }
 
-function checkoutYoco() {
-  if (cart.length === 0) {
-    alert("Cart is empty");
-    return;
-  }
-
-  const shippingName = document.getElementById("ship-name").value.trim();
-  const shippingAddress = document.getElementById("ship-address").value.trim();
-  const shippingCity = document.getElementById("ship-city").value.trim();
-  const shippingRegion = document.getElementById("ship-region").value;
-  const shippingPhone = document.getElementById("ship-phone").value.trim();
-  const shippingCost = parseFloat(document.getElementById('ship-cost').value) || 0;
-
-  if (!shippingName || !shippingAddress || !shippingCity || !shippingPhone) {
-    alert("Please complete shipping details before payment.");
-    return;
-  }
-
-  const total = cart.length * price + shippingCost;
-  const orderRef = "THU-" + Date.now();
-
-  let orderSummary = `Order Ref: ${orderRef}
-`;
-  cart.forEach(item => {
-    orderSummary += `${item} - R230
-`;
-  });
-  orderSummary += `Shipping: R${shippingCost}
-Total: R${total}
-
-`;
-  orderSummary += `Customer: ${shippingName}
-Phone: ${shippingPhone}
-`;
-  orderSummary += `Address: ${shippingAddress}, ${shippingCity}, ${shippingRegion}`;
-
-  // Save order
-  let orders = JSON.parse(localStorage.getItem("thubalesha_orders") || "[]");
-  orders.push({ ref: orderRef, customer: shippingName, total: total, date: new Date().toLocaleString() });
-  localStorage.setItem("thubalesha_orders", JSON.stringify(orders));
-
-  // Send WhatsApp
-  const whatsappURL = `https://wa.me/27787102337?text=${encodeURIComponent(orderSummary)}`;
-  window.open(whatsappURL, "_blank");
-
-  // Redirect to Yoco
-  window.location.href = "https://pay.yoco.com/thubalesha-general-trading";
+function checkoutYoco(){
+if(cart.length===0){alert('Cart is empty');return;}
+const shippingCost = parseFloat(document.getElementById('ship-cost').value) || 0;
+const totalAmount = (cart.length*price + shippingCost)*100;
+const yoco = new window.YocoSDK({publicKey: 'pk_test_YOCO_PUBLIC_KEY'});
+yoco.showPopup({
+amount: totalAmount,
+currency: 'ZAR',
+token: function(token) {
+alert('Payment successful! Token: '+token.id);
+showSuccess();
+},
+onError: function(err) {alert('Payment failed: '+err);}
+});
 }
 
-function showEFT(){
-  const box = document.getElementById('eft-details');
-  box.style.display = box.style.display === 'block' ? 'none' : 'block';
-}
-
-function showSuccess() {
-  document.getElementById('success').style.display = 'block';
-  setTimeout(() => {
-    document.getElementById('success').style.display = 'none';
-  }, 3000);
-  cart = [];
-  updateCart();
+function showSuccess(){
+document.getElementById('success').style.display='block';
+setTimeout(()=>{document.getElementById('success').style.display='none';},3000);
+cart=[];
+updateCart();
 }
 </script></body>
 </html>
