@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>THUBALESHA Signup</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0a0a0a;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+background:#141414;
+padding:30px;
+width:400px;
+border-radius:10px;
+box-shadow:0 0 25px rgba(255,215,0,0.3);
+}
+
+h2{
+text-align:center;
+color:gold;
+}
+
+input{
+width:100%;
+padding:12px;
+margin:8px 0;
+border:none;
+border-radius:6px;
+background:#222;
+color:white;
+}
+
+button{
+width:100%;
+padding:12px;
+background:gold;
+border:none;
+border-radius:6px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.success{
+margin-top:15px;
+text-align:center;
+color:#00ff9d;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>THUBALESHA Signup</h2>
+
+<form id="signupForm">
+
+<input type="text" id="name" placeholder="Full Name" required>
+
+<input type="text" id="idnumber" placeholder="ID Number" required>
+
+<input type="text" id="contact" placeholder="Contact Number" required>
+
+<input type="email" id="email" placeholder="Email Address" required>
+
+<input type="text" id="address" placeholder="Home Address" required>
+
+<input type="text" id="referred" placeholder="Referral Code (Optional)">
+
+<button type="submit">Create Account</button>
+
+</form>
+
+<div class="success" id="successMsg"></div>
+
+</div>
+
+<script>
+
+/* EMAILJS */
+
+emailjs.init({
+publicKey:"0PazREzQtkxaCNEKN"
+});
+
+
+/* SUPABASE */
+
+const supabaseUrl="https://jxhhbowjimhvkzuhosgs.supabase.co";
+
+const supabaseKey="sb_publishable_KZ6k8sgi5DUBjzBjKrgnwQ_2YmRr62u";
+
+const supabase = window.supabase.createClient(
+supabaseUrl,
+supabaseKey
+);
+
+
+/* AUTO REFERRAL FROM LINK */
+
+const params = new URLSearchParams(window.location.search);
+
+const ref = params.get("ref");
+
+if(ref){
+document.getElementById("referred").value = ref;
+}
+
+
+/* GENERATE REFERRAL */
+
+function generateReferral(){
+
+const chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+let code="THUBA-";
+
+for(let i=0;i<6;i++){
+
+code+=chars.charAt(
+Math.floor(Math.random()*chars.length)
+);
+
+}
+
+return code;
+
+}
+
+
+/* SIGNUP */
+
+document.getElementById("signupForm").addEventListener("submit",async function(e){
+
+e.preventDefault();
+
+let name=document.getElementById("name").value;
+
+let idnumber=document.getElementById("idnumber").value;
+
+let contact=document.getElementById("contact").value;
+
+let email=document.getElementById("email").value;
+
+let address=document.getElementById("address").value;
+
+let referred=document.getElementById("referred").value;
+
+let referral=generateReferral();
+
+
+/* SAVE USER */
+
+const { error } = await supabase
+.from("users")
+.insert([
+{
+name:name,
+idnumber:idnumber,
+contact:contact,
+email:email,
+address:address,
+referral:referral,
+referred:referred
+}
+]);
+
+
+if(error){
+
+alert("Signup failed");
+
+console.log(error);
+
+return;
+
+}
+
+
+/* SEND EMAIL */
+
+emailjs.send(
+"service_z1c4gpi",
+"template_signup",
+{
+name:name,
+email:email,
+contact:contact,
+referral:referral
+}
+);
+
+
+/* SHOW SUCCESS */
+
+document.getElementById("successMsg").innerHTML=
+
+"Signup Successful!<br>Your Referral Code:<br><b>"+referral+"</b><br><br>Your Referral Link:<br>https://thubalesha.co.za/signup.html?ref="+referral;
+
+document.getElementById("signupForm").reset();
+
+});
+
+</script>
+
+</body>
+</html>
