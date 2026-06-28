@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Now Pay Later - THUBALESHA</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f8f5ef;
+    text-align:center;
+    padding:40px 20px;
+}
+
+.logo{
+    width:180px;
+    max-width:80%;
+    margin-bottom:20px;
+}
+
+h2{
+    color:#8B6B2E;
+    margin-bottom:30px;
+}
+</style>
+
+</head>
+<body>
+
+<!-- THUBALESHA Logo -->
+<img src="logo.png" alt="THUBALESHA Logo" class="logo">
+
+<h2>Buy Now Pay Later</h2>
+
+<div id="paypal-button-container-P-2YJ76191TV7123301NJAPRFQ"></div>
+<script src="https://www.paypal.com/sdk/js?client-id=AbP0SplDALXTgpyMdWLIXGn1TzjWNTdx-2Z773JIqWhGBIDIq3k-B18O2l4Y2k9EVqHAtArbOHRk53ip&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
+<script>
+  paypal.Buttons({
+      style: {
+          shape: 'rect',
+          color: 'white',
+          layout: 'vertical',
+          label: 'paypal'
+      },
+      createSubscription: function(data, actions) {
+        return actions.subscription.create({
+          /* Creates the subscription */
+          plan_id: 'P-2YJ76191TV7123301NJAPRFQ',
+          quantity: 1 // The quantity of the product for a subscription
+        });
+      },
+      onApprove: function(data, actions) {
+        alert(data.subscriptionID); // You can add optional success message for the subscriber here
+      }
+  }).render('#paypal-button-container-P-2YJ76191TV7123301NJAPRFQ'); // Renders the PayPal button
+</script>
+</body>
+</html>
